@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'axesor-microservice
+
+  Sample SAM Template for axesor-microservice
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  CommonSearchFunction:
+    Type: AWS::Serverless::Function
+    Role:
+      Fn::GetAtt:
+      - LambdaExecutionRole
+      - Arn
+    Properties:
+      Timeout: 9
+      CodeUri: CommonSearchFunction
+      Handler: app.commonSearch
+      Runtime: nodejs12.x
+      Environment:
+        Variables:
+          AXESOR_API_URL: https://www.axesor.es/buscador-unificado
+      Events:
+        CommonSearch:
+          Type: Api
+          Properties:
+            Path: /commonSearch
+            Method: get
+Outputs:
+  AxesorApi:
+    Description: API Gateway endpoint URL for Prod stage for CommonSearch function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/axesor/
+  CommonSearchFunction:
+    Description: Axesor common search
+    Value:
+      Fn::GetAtt:
+      - CommonSearchFunction
+      - Arn
